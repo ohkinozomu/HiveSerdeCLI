@@ -3,6 +3,9 @@
  */
 package hiveSerdeCLI
 
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
+import kotlinx.cli.required
 import org.apache.hadoop.hive.serde2.OpenCSVSerde
 import java.util.Properties
 import org.apache.hadoop.hive.serde.serdeConstants
@@ -10,13 +13,12 @@ import org.apache.hadoop.io.Text
 import java.io.File
 
 class App {
-    fun deserialize() {
+    fun deserialize(columns: String, columnTypes: String, fileName: String) {
         val csv = OpenCSVSerde()
         val props = Properties()
-        props.setProperty(serdeConstants.LIST_COLUMNS, "a,b,c")
-        props.setProperty(serdeConstants.LIST_COLUMN_TYPES, "string,string,string")
+        props.setProperty(serdeConstants.LIST_COLUMNS, columns)
+        props.setProperty(serdeConstants.LIST_COLUMN_TYPES, columnTypes)
         csv.initialize(null, props, null)
-        val fileName = "test.csv"
         val text = File(fileName).readText()
         val `in` = Text(text)
         val row = csv.deserialize(`in`) as List<*>
@@ -25,6 +27,12 @@ class App {
     }
 }
 
-fun main() {
-    App().deserialize()
+fun main(args: Array<String>) {
+    val parser = ArgParser("HiveSerdeCLI")
+    val columns by parser.option(ArgType.String, shortName = "c", description = "Columns").required()
+    val columnTypes by parser.option(ArgType.String, shortName = "ct", description = "Columns Types").required()
+    val fileName by parser.option(ArgType.String, shortName = "f", description = "File Name").required()
+    parser.parse(args)
+
+    App().deserialize(columns, columnTypes, fileName)
 }
