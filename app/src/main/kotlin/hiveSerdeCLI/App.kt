@@ -9,21 +9,52 @@ import kotlinx.cli.required
 import org.apache.hadoop.hive.serde2.OpenCSVSerde
 import java.util.Properties
 import org.apache.hadoop.hive.serde.serdeConstants
+import org.apache.hadoop.hive.serde2.AbstractSerDe
+import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe
 import org.apache.hadoop.io.Text
 import java.io.File
+import kotlin.system.exitProcess
 
 class App {
-    fun deserialize(columns: String, columnTypes: String, fileName: String) {
-        val csv = OpenCSVSerde()
+    private fun openCSVDeserialize(columns: String, columnTypes: String, fileName: String) {
+        val serdeLib = OpenCSVSerde()
         val props = Properties()
         props.setProperty(serdeConstants.LIST_COLUMNS, columns)
         props.setProperty(serdeConstants.LIST_COLUMN_TYPES, columnTypes)
-        csv.initialize(null, props, null)
+        serdeLib.initialize(null, props, null)
         val text = File(fileName).readText()
         val `in` = Text(text)
-        val row = csv.deserialize(`in`) as List<*>
+        val row = serdeLib.deserialize(`in`) as List<*>
         println(row)
         println(row.size)
+    }
+
+    private fun lazySimpleDeserialize(columns: String, columnTypes: String, fileName: String) {
+        val serdeLib = OpenCSVSerde()
+        val props = Properties()
+        props.setProperty(serdeConstants.LIST_COLUMNS, columns)
+        props.setProperty(serdeConstants.LIST_COLUMN_TYPES, columnTypes)
+        serdeLib.initialize(null, props, null)
+        val text = File(fileName).readText()
+        val `in` = Text(text)
+        val row = serdeLib.deserialize(`in`) as List<*>
+        println(row)
+        println(row.size)
+    }
+
+    fun deserialize(serde: String, columns: String, columnTypes: String, fileName: String) {
+        when (serde) {
+            "OpenCSVSerde" -> {
+                openCSVDeserialize(columns, columnTypes, fileName)
+            }
+            "LazySimpleSerde" -> {
+                lazySimpleDeserialize(columns, columnTypes, fileName)
+            }
+            else -> {
+                println("Invalid Serde Library: OpenCSVSerde and LazySimpleSerDe are supported.")
+                exitProcess(1)
+            }
+        }
     }
 }
 
@@ -32,7 +63,8 @@ fun main(args: Array<String>) {
     val columns by parser.option(ArgType.String, shortName = "c", description = "Columns").required()
     val columnTypes by parser.option(ArgType.String, shortName = "ct", description = "Columns Types").required()
     val fileName by parser.option(ArgType.String, shortName = "f", description = "File Name").required()
+    val serde by parser.option(ArgType.String, shortName = "s", description = "Serde Library").required()
     parser.parse(args)
 
-    App().deserialize(columns, columnTypes, fileName)
+    App().deserialize(serde, columns, columnTypes, fileName)
 }
