@@ -27,7 +27,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     // This dependency is used by the application.
-    implementation("com.google.guava:guava:30.1.1-jre")
+    implementation("com.google.guava:guava:31.0.1-jre")
 
     // https://mvnrepository.com/artifact/org.apache.hive/hive-serde
     implementation( "org.apache.hive:hive-serde:3.1.2")
