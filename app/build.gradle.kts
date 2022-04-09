@@ -30,7 +30,7 @@ dependencies {
     implementation("com.google.guava:guava:31.1-jre")
 
     // https://mvnrepository.com/artifact/org.apache.hive/hive-serde
-    implementation( "org.apache.hive:hive-serde:3.1.2")
+    implementation( "org.apache.hive:hive-serde:3.1.3")
 
     // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-cli
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.4")
