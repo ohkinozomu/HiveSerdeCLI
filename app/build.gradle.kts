@@ -33,7 +33,7 @@ dependencies {
     implementation( "org.apache.hive:hive-serde:3.1.3")
 
     // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-cli
-    implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.6")
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
